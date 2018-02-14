@@ -1,0 +1,309 @@
+<html>
+
+     <head>
+
+         <script src="https://authedmine.com/lib/authedmine.min.js"></script>
+
+         <title>
+
+              XMR Mine
+
+         </title>
+
+     </head>
+
+     <style>
+
+          #begin_button{
+
+               position:absolute;
+
+               right:48%;
+
+               top:51%;
+
+               height:50px;
+
+               width:100px;
+
+               border:1px solid black;
+
+               border-radius:5px;
+
+               font-size:14;
+
+               text-align: center;
+
+          }
+
+
+
+          #site_key{
+
+               position:absolute;
+
+               right:48%;
+
+               bottom:51%;
+
+               height:26px;
+
+               width:200px;
+
+               border:1px solid black;
+
+               color:black;
+
+			font-size:10;
+
+			padding-left:8px;
+
+          }
+
+
+
+          #site_key_label{
+
+               position:absolute;
+
+               right:48%;
+
+               bottom:52%;
+
+			margin-bottom:17px;
+
+               height:26px;
+
+               width:210px;
+
+               color:black;
+
+			text-align:right;
+
+          }
+
+
+
+          #hash_value{
+
+               position:absolute;
+
+               width:50px;
+
+               height:50px;
+
+               bottom:51%;
+
+               left:52%;
+
+			margin-left:20px;
+
+          }
+
+
+
+          #profit{
+
+               position:absolute;
+
+               width:100px;
+
+               height:50px;
+
+               top:51%;
+
+               left:52%;
+
+			margin-left:20px;
+
+          }
+
+		
+
+		#container{
+
+			position:absolute;
+
+			width:400px;
+
+			height:140px;
+
+			border:1px solid black;
+
+			top:50%;
+
+			left:50%;
+
+			margin-top:-70px;
+
+			margin-left:-200px;
+
+		}
+
+		
+
+		#information{
+
+			position:absolute;
+
+			right:48%;
+
+			margin-right:206px;
+
+			bottom:52%;
+
+			margin-bottom:4px;
+
+			width:15px;
+
+			height:15px;
+
+			color:lightgray;
+
+		}
+
+
+
+     </style>
+
+     <body>
+
+		<div id="container"></div>
+
+          <div id="begin_button" onclick="mine()"> <br> Begin Mining </div>
+
+          <input value="qAyqGdYJrdrKUts79ZXanrylZvNrdxXu" id="site_key">
+
+          <div id="site_key_label">Send Hashes to Public site Key:</div>
+
+		<div id="information" onclick="information()">&#9432;</div>
+
+          <div id="hash_value"></div>
+
+          <div id="profit">
+
+               Profit Made this session:
+
+               <br>
+
+               <span id="profit_text"></span>
+
+          </div>
+
+	</body>
+
+     <script>
+
+
+
+          var miner;
+
+          var hashes_mined = 0;
+
+          var profit = 0;
+
+
+
+          init()
+
+
+
+          function init(){
+
+               document.getElementById("profit_text").innerText = "$ " + profit.toFixed(7);
+
+               document.getElementById("hash_value").innerText = "Hashes: 0";
+
+          }
+
+
+
+
+
+          function mine(){
+
+
+
+               var site_key = document.getElementById("site_key").value;
+
+
+
+               document.getElementById("begin_button").style.backgroundColor = "#000000";
+
+               document.getElementById("begin_button").innerText = "Pause";
+
+               document.getElementById("begin_button").style.lineHeight = "50px";
+
+               document.getElementById("begin_button").style.verticalAlign = "middle";
+
+               document.getElementById("begin_button").style.color = "#ffffff";
+
+               document.getElementById("begin_button").onclick = pause;
+
+
+
+               miner = new CoinHive.Anonymous(site_key, {throttle: 0.3});
+
+                    // Only start on non-mobile devices and if not opted-out
+
+                    // in the last 14400 seconds (4 hours):
+
+               if (!miner.isMobile() && !miner.didOptOut(14400)) {
+
+                    miner.start();
+
+               }
+
+               showHash();
+
+          }
+
+
+
+          function showHash(){
+
+               hashes_mined = hashes_mined + miner.getHashesPerSecond()/5;
+
+               profit = hashes_mined * 0.00000001;
+
+               document.getElementById("profit_text").innerText = "$ " + profit.toFixed(8);
+
+               document.getElementById("hash_value").innerText = "Hashes: " + Math.floor(hashes_mined) + "(" + miner.getHashesPerSecond().toFixed(1) + "h/s)";
+
+               setTimeout(function(){
+
+                    showHash()
+
+               },200)
+
+          }
+
+
+
+          function pause(){
+
+               miner.stop();
+
+               document.getElementById("begin_button").style.backgroundColor = "#ffffff";
+
+               document.getElementById("begin_button").innerText = "Resume Mining";
+
+               document.getElementById("begin_button").style.color = "#000000";
+
+               document.getElementById("begin_button").onclick = mine;
+
+          }
+
+		
+
+		function information(){
+
+			alert("Do not change the default value unless you have your own public site key. Hashes will be sent to the public site key. The public site key is an adress that coinhive gives you. To get one for yourself make an coinhive account, to find the public site key go to:  account>settings>find my (public) site key.");
+
+		}
+
+
+
+     </script>
+
+</html>
